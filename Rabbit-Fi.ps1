@@ -83,9 +83,12 @@ function Install-RabbitMQ
          $ErrorActionPreference = "SilentlyContinue"
          .\rabbitmqctl start_app
          .\rabbitmqctl add_user $rabbitMQDBUser $rabbitMQDBPass
-         .\rabbitmqctl set_permissions "$rabbitMQDBPass" .* .* .*
+         .\rabbitmqctl set_permissions "$rabbitMQDBUser" .* .* .*
 		 #delete user always throws error on rerun  so running as a process
-		 Start-Process -FilePath .\rabbitmqctl -ArgumentList "delete_user guest"
+
+		 $deleteuser = .\rabbitmqctl delete_user guest
+		 .\rabbitmqctl list_users
+
          $ErrorActionPreference = "Continue" 
 		 
 		 
