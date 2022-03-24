@@ -33,8 +33,22 @@ function Install-ApacheHttpd
 	}  
 	
 	Set-Location (Join-Path $installPath "bin")
-	./httpd.exe -k install
-	Start-Service "Apache2.4"
+	$apacheServiceName = "Apache2.4"
+	$apacheService = Get-Service $apacheServiceName -ErrorAction SilentlyContinue
+	if($apacheService)
+	{
+		Write-Host "Starting" $apacheService.Name
+		Start-Service $apacheService.Name
+	}
+	else
+	{
+		Write-Host "Installing Apache Service:" $apacheService.Name
+		./httpd.exe -k install
+		Write-Host "Starting" $apacheService.Name
+		Start-Service $apacheServiceName.Name		
+	}
+
+	
 }
 
 Install-ApacheHttpd -packagePath "#{Octopus.Action[Deploy ApacheHttpd].Output.Package.InstallationDirectoryPath}" -installPath "c:\Apache24" -configPath "#{Octopus.Action[Deploy ApacheConfig].Output.Package.InstallationDirectoryPath}"
